@@ -1,20 +1,76 @@
-import sys,os,shutil
+import sys
 from PySide6.QtWidgets import (
-    QApplication,
-    QWidget,
-    QVBoxLayout,
-    QPushButton,
-    QListWidget,
-    QLabel,
-    QStackedWidget,
-    QMainWindow,
-    QToolBar,
-    QStatusBar,
+    QApplication, QMainWindow, QVBoxLayout, QWidget,
+    QPushButton, QLabel, QStackedWidget, QFileDialog, QMessageBox, QListWidget
 )
-from PySide6.QtGui import QAction, QIcon
+
+class MenuPage(QWidget):
+    """Menu page with options to navigate to Flashcards or Statistics."""
+
+    def __init__(self, switch_to_flashcards, switch_to_statistics):
+        super().__init__()
+        layout = QVBoxLayout()
+
+        # Title label
+        layout.addWidget(QLabel("Welcome to the Flashcard App"))
+
+        # Button to go to Flashcards
+        flashcards_button = QPushButton("Flashcards")
+        flashcards_button.clicked.connect(switch_to_flashcards)
+        layout.addWidget(flashcards_button)
+
+        # Button for Statistics
+        statistics_button = QPushButton("Statistics")
+        statistics_button.clicked.connect(switch_to_statistics)
+        layout.addWidget(statistics_button)
+
+        self.setLayout(layout)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+'''
 from flashcard import *
 from statistic import *
-
 class Home(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -104,4 +160,4 @@ if __name__ == '__main__':
     window = App()
     window.initUI()
     window.show()
-    app.exec()
+    app.exec()'''
