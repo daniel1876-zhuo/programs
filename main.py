@@ -1,11 +1,14 @@
 import sys
+from zipfile import ZipFile
 from PySide6.QtWidgets import (
     QApplication, QMainWindow, QVBoxLayout, QWidget,
     QPushButton, QLabel, QStackedWidget, QFileDialog, QMessageBox, QListWidget
 )
 from menu import *
-from flashcard import *
+from flashcardmenu import *
 from statistic import *
+from editor import *
+from test import *
 
 
 class MainWindow(QMainWindow):
@@ -19,13 +22,18 @@ class MainWindow(QMainWindow):
         self.stacked_widget = QStackedWidget()
 
         # Create instances of pages
-        self.menu_page = MenuPage(self.show_flashcards_page, self.show_statistics_page)
+        self.menu_page = MenuPage(
+            self.create_flashcards,
+            self.import_flashcards,
+            self.show_statistics_page
+        )
         self.flashcards_page = FlashcardsPage(
             self.show_add_flashcard_page,
             self.show_revision_page,
             self.show_menu_page,
         )
-        self.add_flashcard_page = AddFlashcardPage(self.show_flashcards_page)
+        self.add_flashcard_page = EditorPage(self.show_flashcards_page)
+        
         self.revision_page = RevisionPage(
             self.show_flashcards_page,
             self.show_menu_page,
@@ -52,6 +60,38 @@ class MainWindow(QMainWindow):
     def show_flashcards_page(self):
         """Switch to the flashcards page."""
         self.stacked_widget.setCurrentWidget(self.flashcards_page)
+
+    def create_flashcards(self):
+        """copies empty template to ./current folder, then switches to flashcard menu"""
+        path = "./current"
+        shutil.rmtree(path)
+        # os.mkdir(path)
+        shutil.copytree("./New flashcards",path)
+        self.stacked_widget.setCurrentWidget(self.flashcards_page)
+        self.flashcards_page.updatetext()
+
+    def import_flashcards(self):
+        """User can upload flashcard and flashcards will be loaded to ./current"""
+        options = QFileDialog.Options()
+        try:
+            file_name, _ = QFileDialog.getOpenFileName(self, "Upload File", "", "Zip Files (*.zip);;All Files (*)",
+                                                    options=options)
+            shutil.rmtree("./unzip")
+            os.mkdir("./unzip")
+            with ZipFile(file_name, 'r') as zObject:
+                zObject.extractall("./unzip")
+            zipname = file_name[file_name.rfind("/")+1:-4]
+            shutil.rmtree("./current")
+            shutil.copytree("./unzip/"+zipname,"./current")
+            shutil.rmtree("./unzip/"+zipname)
+            shutil.rmtree("./unzip/__MACOSX")
+            self.stacked_widget.setCurrentWidget(self.flashcards_page)
+            self.flashcards_page.updatetext()
+            QMessageBox.information(self,"","Flashcards loaded!")
+        except:
+            QMessageBox.information(self,"","Flashcards failed to load")
+
+
 
 
     def show_add_flashcard_page(self):
