@@ -64,8 +64,10 @@ class MainWindow(QMainWindow):
     def create_flashcards(self):
         """copies empty template to ./current folder, then switches to flashcard menu"""
         path = "./current"
-        shutil.rmtree(path)
-        # os.mkdir(path)
+        try:
+            shutil.rmtree(path)
+        except:
+            pass
         shutil.copytree("./New flashcards",path)
         self.stacked_widget.setCurrentWidget(self.flashcards_page)
         self.flashcards_page.updatetext()
@@ -75,13 +77,19 @@ class MainWindow(QMainWindow):
         options = QFileDialog.Options()
         try:
             file_name, _ = QFileDialog.getOpenFileName(self, "Upload File", "", "Zip Files (*.zip);;All Files (*)",
-                                                    options=options)
-            shutil.rmtree("./unzip")
+                                                       options=options)
+            try:
+                shutil.rmtree("./unzip")
+            except:
+                pass
             os.mkdir("./unzip")
             with ZipFile(file_name, 'r') as zObject:
                 zObject.extractall("./unzip")
             zipname = file_name[file_name.rfind("/")+1:-4]
-            shutil.rmtree("./current")
+            try:
+                shutil.rmtree("./current")
+            except:
+                pass
             shutil.copytree("./unzip/"+zipname,"./current")
             shutil.rmtree("./unzip/"+zipname)
             shutil.rmtree("./unzip/__MACOSX")
