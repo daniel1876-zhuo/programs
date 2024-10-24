@@ -7,15 +7,18 @@ from PySide6.QtWidgets import (
 class EditorPage(QWidget):
     """
     Page for editing flashcard set.
-    On entry, the first flashcard in the loaded set should be rendered.
+    On entry, the first flashcard question and answer in the loaded set should be rendered.
     Each flashcard can be either text, image, or video.
     The file name of the flashcard is stored in a created folder ./current/metadata.txt
-    with the first row being the name of the set, and the next rows being the names of flashcard files (e.g. q1.txt).
+    File format as follows:
+    Row 1: name of flashcard set
+    Subsequent rows : question file name and answer file name, separated by a colon ':'
+    e.g. q1.txt:a1.txt
     The actual flashcard files (text/image/video) is stored in ./current/flashcards/
     The user can switch between different flashcards.
-    The user can upload a file to replace an original flashcard file, or directly change it if it is a text file.
+    The user can upload a file to replace an original flashcard question or answer, or directly change it if it is a text file.
     The user can choose to close the editor, leading back to flashcardmenu.
-    Any changes made by the usershould be in the loaded flashcard set in ./current
+    Any changes made by the user should be in the loaded flashcard set in ./current
     """
 
     def __init__(self, switch_back):
