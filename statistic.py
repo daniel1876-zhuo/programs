@@ -5,7 +5,16 @@ from PySide6.QtWidgets import (
 )
 
 class StatisticsPage(QWidget):
-    """Page for displaying statistics of answered questions."""
+    """
+    Page for displaying statistics of answered questions.
+    This page should be moved after flashcardmenu (the main menu should only be open,create,tutorial, and after
+    a flashcard is loaded the statistics page is given as an option along edit and start revision.
+    The stats of loaded flashcards will be stored in a newly created folder ./current/stats.txt
+    stats.txt stores statistics for each flashcard in the loaded set in rows, one in each row
+    each row consists of four numbers separated by spaces: number of times flashcard has been seen,
+    number of correct answers, how many flashcards ago has this flashcard been seen, and whether the user submitted
+    a correct answer the last time they answered.
+    """
 
     def __init__(self, switch_back_to_menu):
         super().__init__()
