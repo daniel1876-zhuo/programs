@@ -91,8 +91,6 @@ class MainWindow(QMainWindow):
             except:
                 pass
             shutil.copytree("./unzip/"+zipname,"./current")
-            shutil.rmtree("./unzip/"+zipname)
-            shutil.rmtree("./unzip/__MACOSX")
             self.stacked_widget.setCurrentWidget(self.flashcards_page)
             self.flashcards_page.updatetext()
             QMessageBox.information(self,"","Flashcards loaded!")
