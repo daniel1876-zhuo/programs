@@ -10,9 +10,6 @@ from statistic import *
 from editor import *
 from test import *
 
-"""
-some lines in create_flashcards and import_flashcards have been temporarily disabled since they are not done.
-"""
 
 class MainWindow(QMainWindow):
     """Main window of the application that manages different pages."""
@@ -71,7 +68,7 @@ class MainWindow(QMainWindow):
     def import_flashcards(self):
         """User can upload flashcard and flashcards will be loaded to ./current"""
         try:
-            file_name = QFileDialog.getOpenFileName(self, "Upload File", "", "Zip Files (*.zip);;All Files (*)")
+            file_name = QFileDialog.getOpenFileName(self, "Upload File", "", "Zip Files (*.zip);;All Files (*)")[0]
             try:
                 shutil.rmtree("./unzip")
             except:
