@@ -83,8 +83,8 @@ class EditorPage(QWidget):
             # adding description file and question file
             with open("./current/metadata.txt", "w", encoding="utf-8") as f:
                 self.metatext[1] = str(self.file_id)+"\n"
-                self.metatext.append(f"{target_path}_des.txt:{target_path}_answer_des.txt\n")
-                self.metatext.append(f"{self.question_file_path}:{self.answer_file_path}\n")
+                self.metatext.append(f"{self.file_id}_des.txt:{self.file_id}_answer_des.txt\n")
+                self.metatext.append(f"{self.question_file_path.split('/')[-1]}:{self.answer_file_path.split('/')[-1]}\n")
                 f.writelines(self.metatext)
 
             self.file_id += 1  # increment number of flashcards by 1
