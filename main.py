@@ -59,18 +59,18 @@ class MainWindow(QMainWindow):
 
     def create_flashcards(self):
         """copies empty template to ./current folder, then switches to flashcard menu"""
-        """path = "./current"
+        path = "./current"
         try:
             shutil.rmtree(path)
         except:
             pass
-        shutil.copytree("./New flashcards",path)"""
+        shutil.copytree("./New flashcards",path)
         self.stacked_widget.setCurrentWidget(self.flashcards_page)
         self.flashcards_page.updatetext()
 
     def import_flashcards(self):
         """User can upload flashcard and flashcards will be loaded to ./current"""
-        """try:
+        try:
             file_name = QFileDialog.getOpenFileName(self, "Upload File", "", "Zip Files (*.zip);;All Files (*)")
             try:
                 shutil.rmtree("./unzip")
@@ -89,7 +89,7 @@ class MainWindow(QMainWindow):
             self.flashcards_page.updatetext()
             QMessageBox.information(self,"","Flashcards loaded!")
         except:
-            QMessageBox.information(self,"","Flashcards failed to load")"""
+            QMessageBox.information(self,"","Flashcards failed to load")
 
     def show_menu_page(self):
         """Switch to the menu page."""
@@ -100,6 +100,13 @@ class MainWindow(QMainWindow):
         self.stacked_widget.setCurrentWidget(self.flashcards_page)
 
     def show_add_flashcard_page(self):
+        """
+        Each time when "edit flashcards" button is clicked,
+        it creates the ./current/flashcards directory again.
+        """
+        target_directory = "./current/flashcards/"
+        if os.path.isdir(target_directory) == False:
+            os.mkdir(target_directory)
         """Switch to the add flashcard page."""
         self.stacked_widget.setCurrentWidget(self.add_flashcard_page)
 
