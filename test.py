@@ -98,6 +98,9 @@ class RevisionPage(QWidget):
         question_file = f"{directory}/{metadata[question_id * 2 + 1].split(':')[0]}"
         answer_description_text = f"{directory}/{metadata[question_id * 2].split(':')[1][:-1]}"
         answer_file = f"{directory}/{metadata[question_id * 2 + 1].split(':')[1][:-1]}"
+        
+     """You may want to use string.endswith(suffix) that returns a boolean value indicating 
+    whether the string ends with this suffix, in order to decide which function is used to render the flashcard"""
 
         #QMessageBox.information(self, "Next Question", "Here would be the next question.")
 
