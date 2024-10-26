@@ -97,18 +97,14 @@ class EditorPage(QWidget):
         self.question_input.clear()
 
     def upload_question_and_answer(self,switch_back):
-        target_directory = "./current/flashcards/"
-        if os.path.isdir(target_directory) == False:
-            os.mkdir(target_directory)
-            print("flashcards folder created!")
-        else:
-            print("flashcards folder already exists")
-        with open("./current/metadata.txt", "r", encoding="utf-8") as f:
-            self.file_id = int(f.readlines()[1][0:-1])#the index of the latest file added
-        self.file_id += 1
-        self.question_file_path = f"./current/flashcards/{str(self.file_id)}_file.txt"
-        self.answer_file_path = f"./current/flashcards/{str(self.file_id)}_answer_file.txt"
-
+        try:
+            with open("./current/metadata.txt", "r", encoding="utf-8") as f:
+                self.file_id = int(f.readlines()[1][0:-1])#the index of the latest file added
+            self.file_id += 1
+            self.question_file_path = f"./current/flashcards/{str(self.file_id)}_file.txt"
+            self.answer_file_path = f"./current/flashcards/{str(self.file_id)}_answer_file.txt"
+        except Exception as e: #metadata likely doesn't exist yet, will repeat detection in updatepage()
+            print(e)
         # Input for question's description
         self.question_label = QLabel("Enter your question's description (If Any):")
         self.question_input = QTextEdit()
@@ -131,3 +127,15 @@ class EditorPage(QWidget):
         self.layout.addWidget(self.upload_button)
         self.layout.addWidget(self.submit_button)
         self.layout.addWidget(back_button)
+
+    def updatepage(self, switch_back): # update file fetching when flashcards loaded
+        self.layout.deleteLater()
+        self.layout = QVBoxLayout()
+
+        # Title label
+        self.layout.addWidget(QLabel("Add New Flashcard"))
+
+        self.upload_question_and_answer(switch_back)
+        self.setLayout(self.layout)
+
+
