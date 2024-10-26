@@ -10,6 +10,9 @@ from statistic import *
 from editor import *
 from test import *
 
+"""
+some lines in create_flashcards and import_flashcards have been temporarily disabled since they are not done.
+"""
 
 class MainWindow(QMainWindow):
     """Main window of the application that manages different pages."""
@@ -52,32 +55,23 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.stacked_widget)
 
 
-    def show_menu_page(self):
-        """Switch to the menu page."""
-        self.stacked_widget.setCurrentWidget(self.menu_page)
 
-
-    def show_flashcards_page(self):
-        """Switch to the flashcards page."""
-        self.stacked_widget.setCurrentWidget(self.flashcards_page)
 
     def create_flashcards(self):
         """copies empty template to ./current folder, then switches to flashcard menu"""
-        path = "./current"
+        """path = "./current"
         try:
             shutil.rmtree(path)
         except:
             pass
-        shutil.copytree("./New flashcards",path)
+        shutil.copytree("./New flashcards",path)"""
         self.stacked_widget.setCurrentWidget(self.flashcards_page)
         self.flashcards_page.updatetext()
 
     def import_flashcards(self):
         """User can upload flashcard and flashcards will be loaded to ./current"""
-        options = QFileDialog.Options()
-        try:
-            file_name, _ = QFileDialog.getOpenFileName(self, "Upload File", "", "Zip Files (*.zip);;All Files (*)",
-                                                       options=options)
+        """try:
+            file_name = QFileDialog.getOpenFileName(self, "Upload File", "", "Zip Files (*.zip);;All Files (*)")
             try:
                 shutil.rmtree("./unzip")
             except:
@@ -95,10 +89,15 @@ class MainWindow(QMainWindow):
             self.flashcards_page.updatetext()
             QMessageBox.information(self,"","Flashcards loaded!")
         except:
-            QMessageBox.information(self,"","Flashcards failed to load")
+            QMessageBox.information(self,"","Flashcards failed to load")"""
 
+    def show_menu_page(self):
+        """Switch to the menu page."""
+        self.stacked_widget.setCurrentWidget(self.menu_page)
 
-
+    def show_flashcards_page(self):
+        """Switch to the flashcards page."""
+        self.stacked_widget.setCurrentWidget(self.flashcards_page)
 
     def show_add_flashcard_page(self):
         """Switch to the add flashcard page."""
