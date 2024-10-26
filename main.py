@@ -100,13 +100,7 @@ class MainWindow(QMainWindow):
         self.stacked_widget.setCurrentWidget(self.flashcards_page)
 
     def show_add_flashcard_page(self):
-        """
-        Each time when "edit flashcards" button is clicked,
-        it creates the ./current/flashcards directory again.
-        """
-        target_directory = "./current/flashcards/"
-        if os.path.isdir(target_directory) == False:
-            os.mkdir(target_directory)
+        self.add_flashcard_page.updatepage(self.show_flashcards_page)
         """Switch to the add flashcard page."""
         self.stacked_widget.setCurrentWidget(self.add_flashcard_page)
 
