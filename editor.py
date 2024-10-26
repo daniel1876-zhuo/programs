@@ -86,7 +86,9 @@ class EditorPage(QWidget):
                 self.metatext.append(f"{self.file_id}_des.txt:{self.file_id}_answer_des.txt\n")
                 self.metatext.append(f"{self.question_file_path.split('/')[-1]}:{self.answer_file_path.split('/')[-1]}\n")
                 f.writelines(self.metatext)
-
+            # update stats.txt, adding a new flashcard's data into it
+            with open("./current/stats.txt","a",encoding="utf-8") as f:
+                f.write(f"0 0 -1 {False}\n")
             self.file_id += 1  # increment number of flashcards by 1
             switch_back()
 
@@ -137,5 +139,3 @@ class EditorPage(QWidget):
 
         self.upload_question_and_answer(switch_back)
         self.setLayout(self.layout)
-
-
