@@ -11,10 +11,7 @@ from PySide6.QtCore import (
 )
 from moviepy.editor import VideoFileClip,AudioFileClip
 from PySide6.QtMultimedia import (
-    QMediaFormat,QMediaPlayer,
-)
-from PySide6.QtMultimediaWidgets import (
-    QVideoWidget
+    QMediaFormat,QMediaPlayer,QAudioOutput,QSoundEffect
 )
 # f = QMediaFormat()
 # print(QMediaFormat.supportedFileFormats(f,QMediaFormat.Decode))
@@ -35,13 +32,13 @@ class MediaPlayer(QWidget):
         with open("./current/metadata.txt", "r", encoding="utf-8") as f:
             try:
                 if answer:
-                    self.fileloc = "./current/flashcards/"+f.readlines()[flashnum+1][0:-1].split(":")[1][:-1]
+                    self.fileloc = "./current/flashcards/"+f.readlines()[flashnum+1][0:-1].split(":")[1]
                 else:
                     self.fileloc = "./current/flashcards/"+f.readlines()[flashnum+1][0:-1].split(":")[0]
             except:
                 self.label = QLabel(" ") ## doesn't exist?
                 self.scroll = QScrollArea()
-                self.scroll.setFixedHeight(300)
+                #self.scroll.setFixedHeight(300)
                 self.scroll.setWidget(self.label)
 
                 return self.scroll
@@ -53,7 +50,7 @@ class MediaPlayer(QWidget):
                 print("Rendering text!")
                 self.label = QLabel(text)
                 self.scroll = QScrollArea()
-                self.scroll.setFixedHeight(300)
+                #self.scroll.setFixedHeight(300)
                 self.scroll.setWidget(self.label)
                 return self.scroll
             elif extension in (".gif,.jpg,.jpeg,.png"):
@@ -73,18 +70,20 @@ class MediaPlayer(QWidget):
             elif extension in (".mp3, .wav"):
                 self.playing = QPushButton("Play The Audio")
                 self.playing.clicked.connect(self.playaudio)
-                return self.playing
+                self.stop_playing = QPushButton("Stop Playing")
+                self.stop_playing.clicked.connect(self.stopplay)
+                return self.playing,self.stop_playing
             else: ##unknown type
                 self.label = QLabel(" ")
                 self.scroll = QScrollArea()
-                self.scroll.setFixedHeight(300)
+                #self.scroll.setFixedHeight(300)
                 self.scroll.setWidget(self.label)
                 return self.scroll
         except Exception as e:
             print(e)
             self.label = QLabel(" ")
             self.scroll = QScrollArea()
-            self.scroll.setFixedHeight(300)
+            #self.scroll.setFixedHeight(300)
             self.scroll.setWidget(self.label)
             return self.scroll ## no file exists?
 
@@ -134,7 +133,17 @@ class MediaPlayer(QWidget):
         pygame.quit()
 
     def playaudio(self):
-        pygame.init()
-        audio = AudioFileClip(self.fileloc)
-        audio.preview()
-        pygame.quit()
+        self.player = QMediaPlayer()
+        self.audio = QAudioOutput()
+        self.player.setAudioOutput(self.audio)
+        self.player.setSource(QUrl.fromLocalFile(self.fileloc))
+        self.audio.setVolume(50)
+        self.player.play()
+
+    def stopplay(self):
+        self.player.stop()
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = MediaPlayer(2)
+    window.show()
+    sys.exit(app.exec())
