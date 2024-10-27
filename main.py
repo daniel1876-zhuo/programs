@@ -10,7 +10,6 @@ from statistic import *
 from editor import *
 from test import *
 
-
 class MainWindow(QMainWindow):
     """Main window of the application that manages different pages."""
 
@@ -85,7 +84,8 @@ class MainWindow(QMainWindow):
             self.stacked_widget.setCurrentWidget(self.flashcards_page)
             self.flashcards_page.updatetext()
             QMessageBox.information(self,"","Flashcards loaded!")
-        except:
+        except Exception as e:
+            print(e)
             QMessageBox.information(self,"","Flashcards failed to load")
 
     def show_menu_page(self):

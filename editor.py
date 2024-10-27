@@ -6,6 +6,10 @@ from PySide6.QtWidgets import (
 from PySide6.QtGui import(
     QAction,
 )
+from PySide6.QtCore import(
+    Qt
+)
+from render import renderflashcard
 
 class EditorPage(QWidget):
     """
@@ -31,18 +35,25 @@ class EditorPage(QWidget):
 
     def __init__(self, switch_back):
         super().__init__()
-        self.layout = QVBoxLayout()
-
-        # Title label
-        self.layout.addWidget(QLabel("Add New Flashcard"))
+        self.Layout = QVBoxLayout()
+        self.toplabel = QLabel("Currently showing flashcard")
+        self.Layout.addWidget(self.toplabel)
+        self.flashnum = QLabel("1")
+        self.flashnum.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.Layout.addWidget(self.flashnum)
+        self.flashrender = renderflashcard(1)
+        self.Layout.addLayout(self.flashrender)
+        self.title = QLabel("Add New Flashcard")
+        self.Layout.addWidget(self.title)
 
         self.upload_question_and_answer(switch_back)
-        self.setLayout(self.layout)
+        self.setLayout(self.Layout)
 
     def upload_file(self,switch_back):
         file = QFileDialog.getOpenFileName(self, "Select Multimedia Files", "",
                                            "Text(*.txt;*.doc;*.docx);;Images (*.png;*.jpg;*.jpeg);;Audio (*.mp3;*.wav);;Videos (*.mp4;*.avi)")
-        if file:
+        if file[0]:
+            print(file)
             target_directory = "./current/flashcards"
             file_suffix = file[0].split(".")[-1] #the file suffix
             if self.is_question:
@@ -83,9 +94,9 @@ class EditorPage(QWidget):
             # adding description file and question file
             with open("./current/metadata.txt", "w", encoding="utf-8") as f:
                 self.metatext[1] = str(self.file_id)+"\n"
-                self.metatext.append(f"{self.file_id}_des.txt:{self.file_id}_answer_des.txt\n")
                 self.metatext.append(f"{self.question_file_path.split('/')[-1]}:{self.answer_file_path.split('/')[-1]}\n")
                 f.writelines(self.metatext)
+
             # update stats.txt, adding a new flashcard's data into it
             with open("./current/stats.txt","a",encoding="utf-8") as f:
                 f.write(f"0 0 -1 {False}\n")
@@ -121,21 +132,63 @@ class EditorPage(QWidget):
         self.submit_button.clicked.connect(lambda:self.submit(switch_back))
 
         # Button to go back to Flashcards page
-        back_button = QPushButton("Back to Flashcards")
-        back_button.clicked.connect(switch_back)
+        self.back_button = QPushButton("Back to Flashcards")
+        self.back_button.clicked.connect(switch_back)
 
-        self.layout.addWidget(self.question_label)
-        self.layout.addWidget(self.question_input)
-        self.layout.addWidget(self.upload_button)
-        self.layout.addWidget(self.submit_button)
-        self.layout.addWidget(back_button)
+        self.Layout.addWidget(self.question_label)
+        self.Layout.addWidget(self.question_input)
+        self.Layout.addWidget(self.upload_button)
+        self.Layout.addWidget(self.submit_button)
+        self.Layout.addWidget(self.back_button)
 
+
+    def clearLayout(self, layout): ##code taken from https://stackoverflow.com/questions/9374063/remove-all-items-from-a-layout"
+        if layout is not None:
+            while layout.count():
+                item = layout.takeAt(0)
+                widget = item.widget()
+                if widget is not None:
+                    widget.deleteLater()
+                else:
+                    self.clearLayout(item.layout())
+    
     def updatepage(self, switch_back): # update file fetching when flashcards loaded
-        self.layout.deleteLater()
-        self.layout = QVBoxLayout()
 
-        # Title label
-        self.layout.addWidget(QLabel("Add New Flashcard"))
+        ## implementation here is a bit awkward but it works for now
+        self.layout().removeItem(self.flashrender)
+        self.layout().removeWidget(self.title)
+        self.Layout.removeWidget(self.question_label)
+        self.Layout.removeWidget(self.question_input)
+        self.Layout.removeWidget(self.upload_button)
+        self.Layout.removeWidget(self.submit_button)
+        self.Layout.removeWidget(self.back_button)
+        self.Layout.removeWidget(self.toplabel)
+        self.Layout.removeWidget(self.flashnum)
+        self.question_label.deleteLater()
+        self.question_input.deleteLater()
+        self.upload_button.deleteLater()
+        self.back_button.deleteLater()
+        self.submit_button.deleteLater()
+        self.toplabel.deleteLater()
+        self.flashnum.deleteLater()
+        while self.flashrender.count():
+            child = self.flashrender.takeAt(0)
+            if child.widget():
+                child.widget().deleteLater()
+        self.title.deleteLater()
 
+
+        self.toplabel = QLabel("Currently showing flashcard")
+        self.Layout.addWidget(self.toplabel)
+        self.flashnum = QLabel("1")
+        self.flashnum.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.flashnum.setStyleSheet("background-color: rgb(50,50,50);")
+        self.Layout.addWidget(self.flashnum)
+        self.flashrender = renderflashcard(1)
+        self.Layout.addLayout(self.flashrender)
+        self.title = QLabel("Add New Flashcard")
+        self.Layout.addWidget(self.title)
         self.upload_question_and_answer(switch_back)
-        self.setLayout(self.layout)
+        self.layout().update()
+
+
