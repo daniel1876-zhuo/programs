@@ -39,16 +39,16 @@ class RevisionPage(QWidget):
 
         # Connect buttons to their respective functions
 
-        self.know_button.clicked.connect(self.know_answer)
-        self.dont_know_button.clicked.connect(self.dont_know_answer)
+        self.know_button.clicked.connect(lambda:self.know_answer)
+        self.dont_know_button.clicked.connect(lambda:self.dont_know_answer)
 
         # Button to go back to Flashcards page
         back_flashcards_button = QPushButton("Back to Flashcards")
-        back_flashcards_button.clicked.connect(switch_back_to_flashcards)
+        back_flashcards_button.clicked.connect(lambda:switch_back_to_flashcards)
 
         # Button to show next question (placeholder functionality)
         next_question_button = QPushButton("Next Question")
-        next_question_button.clicked.connect(self.next_question)
+        next_question_button.clicked.connect(lambda:self.next_question)
 
         # Add widgets to layout
         self.layout.addWidget(self.flashcard_label)
@@ -58,6 +58,8 @@ class RevisionPage(QWidget):
         self.layout.addWidget(next_question_button)
         self.setLayout(self.layout)
         self.question_id = 0
+    
+    def updatestats(self):
         with open("./current/stats.txt","r",encoding="utf-8") as f:
             self.stats = f.readlines()
 
