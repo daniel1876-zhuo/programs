@@ -9,7 +9,7 @@ from statistic import *
 class MenuPage(QWidget):
     """Menu page with options to Open flashcards, create flashcards or view statistics."""
 
-    def __init__(self, createflash, importflash, switch_to_statistics):
+    def __init__(self, createflash, importflash):
         super().__init__()
         layout = QVBoxLayout()
 
@@ -26,14 +26,10 @@ class MenuPage(QWidget):
         create_button.clicked.connect(createflash)
         layout.addWidget(create_button)
 
-        # Button for Statistics
-        statistics_button = QPushButton("Statistics")
-        statistics_button.clicked.connect(switch_to_statistics)
-        layout.addWidget(statistics_button)
+        # not implemented yet
+        tutorial_button = QPushButton("Quick start")
+        layout.addWidget(tutorial_button)
 
         self.setLayout(layout)
 
-    ## removed menubar related things because it is not working
-    ## and we likely won't need it either
-    ## so ¯\_(ツ)_/¯
 

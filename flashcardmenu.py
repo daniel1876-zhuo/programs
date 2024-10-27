@@ -7,7 +7,7 @@ from PySide6.QtWidgets import (
 class FlashcardsPage(QWidget):
     """Flashcards menu after import where you can edit, test, or save&close"""
 
-    def __init__(self, switch_to_add_flashcard, switch_to_revision, switch_back_to_menu):
+    def __init__(self, switch_to_add_flashcard, switch_to_revision, switch_back_to_menu,switch_to_statistics):
         super().__init__()
         layout = QVBoxLayout()
 
@@ -27,6 +27,10 @@ class FlashcardsPage(QWidget):
         start_revision_button = QPushButton("Start Revision")
         start_revision_button.clicked.connect(switch_to_revision)
         layout.addWidget(start_revision_button)
+
+        statistics_button = QPushButton("Show statistics")
+        statistics_button.clicked.connect(switch_to_statistics)
+        layout.addWidget(statistics_button)
 
         # Button to go back to Menu page
         back_to_menu_button = QPushButton("Save (Not finished, will lead back to menu without unloading)")

@@ -23,13 +23,13 @@ class MainWindow(QMainWindow):
         # Create instances of pages
         self.menu_page = MenuPage(
             self.create_flashcards,
-            self.import_flashcards,
-            self.show_statistics_page
+            self.import_flashcards
         )
         self.flashcards_page = FlashcardsPage(
             self.show_add_flashcard_page,
             self.show_revision_page,
             self.show_menu_page,
+            self.show_statistics_page
         )
         self.add_flashcard_page = EditorPage(self.show_flashcards_page,self.refresheditor)
         
@@ -45,7 +45,7 @@ class MainWindow(QMainWindow):
         self.stacked_widget.addWidget(self.flashcards_page)
         self.stacked_widget.addWidget(self.add_flashcard_page)
         self.stacked_widget.addWidget(self.revision_page)
-        # self.stacked_widget.addWidget(self.statistics_page)
+        self.stacked_widget.addWidget(self.statistics_page)
 
         # Set the stacked widget as central widget
         self.setCentralWidget(self.stacked_widget)
@@ -113,6 +113,7 @@ class MainWindow(QMainWindow):
 
     def show_statistics_page(self):
         """Switch to the statistics page."""
+        self.statistics_page.refreshpage(self.show_flashcards_page)
         self.stacked_widget.setCurrentWidget(self.statistics_page)
 
 
