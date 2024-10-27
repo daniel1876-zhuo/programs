@@ -90,7 +90,10 @@ class StatisticsPage(QWidget):
                     subli.append(f"Question {i}: {f.read()}")
             except:
                 subli.append(f"Question {i}: Unknown: No such question exists.")
-            accuracy = round(100*(float(stats[i-1].split(' ')[0])) / (float(stats[i-1].split(' ')[1])),2)
+            try:
+                accuracy = round(100*(float(stats[i-1].split(' ')[0])) / (float(stats[i-1].split(' ')[1])),2)
+            except: ##division by zero
+                accuracy = 0
             last_time_seen = stats[i-1].split(' ')[2]
             number_of_time_seen = stats[i-1].split(' ')[1]
             subli.append(f"Accuracy: {accuracy}%.  Last Time Seen: {last_time_seen} flashcards ago.  Number Of Time: {number_of_time_seen}.\n")
