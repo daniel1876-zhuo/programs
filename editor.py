@@ -9,7 +9,7 @@ from PySide6.QtGui import(
 from PySide6.QtCore import(
     Qt
 )
-from render import renderflashcard
+from render import *
 
 class EditorPage(QWidget):
     """
@@ -39,8 +39,8 @@ class EditorPage(QWidget):
         self.Layout.addWidget(self.flashnum)
 
         self.Layout.addLayout(self.minilayout)
-        self.flashrender = renderflashcard(self.currentflash[0],self.currentflash[1])
-        self.Layout.addLayout(self.flashrender)
+        self.flashrender = MediaPlayer(self.currentflash[0],self.currentflash[1])
+        self.Layout.addWidget(self.flashrender)
         self.title = QLabel("Replace this flashcard")
         self.Layout.addWidget(self.title)
         self.replace_question_and_answer(refresh)
@@ -92,7 +92,7 @@ class EditorPage(QWidget):
                 else:
                     shutil.copy(file[0], self.answer_file_path2)
                     print(f"File copied to: {self.answer_file_path2}")
-                    self.is_uploaded2 = True
+                    self.is_ans_uploaded = True
             except Exception as e:
                 print(f"Error while copying the file: {e}")
 
@@ -246,7 +246,7 @@ class EditorPage(QWidget):
     def updatepage(self, switch_back,refresh): # update file fetching when flashcards loaded
 
         ## implementation here is a bit awkward but it works for now
-        self.layout().removeItem(self.flashrender)
+        self.layout().removeWidget(self.flashrender)
         self.layout().removeWidget(self.title)
         self.Layout.removeWidget(self.question_label)
         self.Layout.removeWidget(self.question_input)
@@ -271,10 +271,11 @@ class EditorPage(QWidget):
         self.submit_button2.deleteLater()
         self.toplabel.deleteLater()
         self.flashnum.deleteLater()
-        while self.flashrender.count():
+        '''while self.flashrender.count():
             child = self.flashrender.takeAt(0)
             if child.widget():
-                child.widget().deleteLater()
+                child.widget().deleteLater()'''
+        self.flashrender.deleteLater()
         self.title.deleteLater()
         self.title2.deleteLater()
 
@@ -284,8 +285,8 @@ class EditorPage(QWidget):
         self.flashnum = QLabel(str(self.currentflash[0]))
         self.flashnum.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.Layout.insertWidget(1,self.flashnum)
-        self.flashrender = renderflashcard(self.currentflash[0],self.currentflash[1])
-        self.Layout.addLayout(self.flashrender)
+        self.flashrender = MediaPlayer(self.currentflash[0],self.currentflash[1])
+        self.Layout.addWidget(self.flashrender)
         self.title = QLabel("Replace this flashcard")
         self.Layout.addWidget(self.title)
         self.replace_question_and_answer(refresh)
@@ -303,12 +304,13 @@ class EditorPage(QWidget):
             self.change.clicked.connect(self.showans)
             self.minilayout.insertWidget(1,self.change)
             self.minilayout.update()
-            while self.flashrender.count():
+            '''while self.flashrender.count():
                 child = self.flashrender.takeAt(0)
                 if child.widget():
-                    child.widget().deleteLater()
-            self.flashrender = renderflashcard(self.currentflash[0],self.currentflash[1])
-            self.layout().insertLayout(3,self.flashrender)
+                    child.widget().deleteLater()'''
+            self.flashrender.deleteLater()
+            self.flashrender = MediaPlayer(self.currentflash[0],self.currentflash[1])
+            self.layout().insertWidget(3,self.flashrender)
             self.layout().update()
         else:  ##currently question, need to show answer
             self.minilayout.removeWidget(self.change)
@@ -318,12 +320,13 @@ class EditorPage(QWidget):
             self.change.clicked.connect(self.showans)
             self.minilayout.insertWidget(1,self.change)
             self.minilayout.update()
-            while self.flashrender.count():
+            '''while self.flashrender.count():
                 child = self.flashrender.takeAt(0)
                 if child.widget():
-                    child.widget().deleteLater()
-            self.flashrender = renderflashcard(self.currentflash[0],self.currentflash[1])
-            self.layout().insertLayout(3,self.flashrender)
+                    child.widget().deleteLater()'''
+            self.flashrender.deleteLater()
+            self.flashrender = MediaPlayer(self.currentflash[0],self.currentflash[1])
+            self.layout().insertWidget(3,self.flashrender)
             self.layout().update()
 
     def changeflash(self,newflashnum):
@@ -346,13 +349,14 @@ class EditorPage(QWidget):
         self.flashnum = QLabel(str(self.currentflash[0]))
         self.flashnum.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.layout().insertWidget(1,self.flashnum)
-        
-        while self.flashrender.count():
+
+        '''while self.flashrender.count():
                 child = self.flashrender.takeAt(0)
                 if child.widget():
-                    child.widget().deleteLater()
-        self.flashrender = renderflashcard(self.currentflash[0],self.currentflash[1])
-        self.layout().insertLayout(3,self.flashrender)
+                    child.widget().deleteLater()'''
+        self.flashrender.deleteLater()
+        self.flashrender = MediaPlayer(self.currentflash[0],self.currentflash[1])
+        self.layout().insertWidget(3,self.flashrender)
         self.minilayout.update()
         self.layout().update()
         
