@@ -70,7 +70,7 @@ def renderfile(flashnum,answer=False):
         scroll = QScrollArea()
         scroll.setFixedHeight(300)
         scroll.setWidget(label)
-        return (scroll,False) ## no file exists?
+        return scroll ## no file exists?
 
 def renderflashcard(flashnum,answer=False):
     layout = QVBoxLayout()
