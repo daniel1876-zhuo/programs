@@ -33,7 +33,7 @@ class FlashcardsPage(QWidget):
         layout.addWidget(statistics_button)
 
         # Button to go back to Menu page
-        back_to_menu_button = QPushButton("Save (Not finished, will lead back to menu without unloading)")
+        back_to_menu_button = QPushButton("Save to program-mains/stored folder")
         back_to_menu_button.clicked.connect(switch_back_to_menu)
         layout.addWidget(back_to_menu_button)
 

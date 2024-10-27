@@ -100,12 +100,17 @@ class MediaPlayer(QWidget):
         if flashnum > int(f.readlines()[1]):
             self.layout.addWidget(QLabel("No existing flashcard yet!"))
             return self.layout
+        try:
+            f.close()
+        except:
+            pass
 
         if answer:
             try:
                 desc = open("./current/flashcards/"+str(flashnum)+"_answer_des.txt")
                 text = "".join(desc.readlines())
                 self.layout.addWidget(QLabel(text))
+                desc.close()
             except: ## no desc
                 pass
             output = self.renderfile(flashnum,True)
@@ -116,6 +121,7 @@ class MediaPlayer(QWidget):
                 desc = open("./current/flashcards/"+str(flashnum)+"_des.txt")
                 text = "".join(desc.readlines())
                 self.layout.addWidget(QLabel(text))
+                desc.close()
             except: ## no desc
                 pass
             output = self.renderfile(flashnum)

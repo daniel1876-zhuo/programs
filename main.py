@@ -25,13 +25,13 @@ class MainWindow(QMainWindow):
         # Create instances of pages
         self.menu_page = MenuPage(
             self.create_flashcards,
-            self.import_flashcards,
-            self.show_statistics_page
+            self.import_flashcards
         )
         self.flashcards_page = FlashcardsPage(
             self.show_add_flashcard_page,
             self.show_revision_page,
             self.show_menu_page,
+            self.show_statistics_page
         )
         self.add_flashcard_page = EditorPage(self.show_flashcards_page,self.refresheditor)
         
@@ -48,7 +48,6 @@ class MainWindow(QMainWindow):
         self.stacked_widget.addWidget(self.add_flashcard_page)
         self.stacked_widget.addWidget(self.revision_page)
         self.stacked_widget.addWidget(self.statistics_page)
-        # self.stacked_widget.addWidget(self.statistics_page)
 
         # Set the stacked widget as central widget
         self.setCentralWidget(self.stacked_widget)
@@ -61,9 +60,8 @@ class MainWindow(QMainWindow):
         except:
             pass
         shutil.copytree("./New flashcards",path)
-        self.stacked_widget.setCurrentWidget(self.flashcards_page)
         self.flashcards_page.updatetext()
-        self.revision_page.updatestats()
+        self.stacked_widget.setCurrentWidget(self.flashcards_page)
 
     def import_flashcards(self):
         """User can upload flashcard and flashcards will be loaded to ./current"""
@@ -81,10 +79,16 @@ class MainWindow(QMainWindow):
                 shutil.rmtree("./current")
             except:
                 pass
-            shutil.copytree("./unzip/"+zipname,"./current")
-            self.stacked_widget.setCurrentWidget(self.flashcards_page)
+            try: ##one of them should work
+                shutil.copytree("./unzip/"+zipname,"./current")
+            except:
+                pass
+            try:
+                shutil.copytree("./unzip/current","./current")
+            except:
+                pass
             self.flashcards_page.updatetext()
-            self.revision_page.updatestats()
+            self.stacked_widget.setCurrentWidget(self.flashcards_page)
             QMessageBox.information(self,"","Flashcards loaded!")
         except Exception as e:
             print(e)
@@ -100,7 +104,6 @@ class MainWindow(QMainWindow):
             target_name = "unnamed_folder"
         target_path = "./stored/"
         target_path_id = 1
-
         if(os.path.exists(f"{target_path}{target_name}.zip") == True):
             while True:
                 if os.path.exists(f"./stored/{target_name}_{target_path_id}.zip") == True:
@@ -110,7 +113,6 @@ class MainWindow(QMainWindow):
             target_name = f"{target_name}_{target_path_id}.zip"
         else:
             target_name = f"{target_name}.zip"
-
         target_path = f"{target_path}{target_name}"
         print(target_path,"is the location the zip stores")
         print("is file already existed:",os.path.exists(target_path))
@@ -120,14 +122,16 @@ class MainWindow(QMainWindow):
                 for file in folder.rglob('*'):
                     print(file.name,"is being zipped as a part of the zip file")
                     zip.write(file,file.relative_to(folder.parent))
-
+    
     def show_menu_page(self):
-        """Switch to the menu page."""
         self.saveall()
+        """Switch to the menu page."""
         self.stacked_widget.setCurrentWidget(self.menu_page)
 
     def show_flashcards_page(self):
         """Switch to the flashcards page."""
+        self.flashcards_page.updatetext()
+        self.revision_page.updatestats()
         self.stacked_widget.setCurrentWidget(self.flashcards_page)
 
     def refresheditor(self):
@@ -144,10 +148,11 @@ class MainWindow(QMainWindow):
         """Switch to the revision page."""
         self.stacked_widget.setCurrentWidget(self.revision_page)
 
+
     def show_statistics_page(self):
         """Switch to the statistics page."""
+        self.statistics_page.refreshpage(self.show_flashcards_page)
         self.stacked_widget.setCurrentWidget(self.statistics_page)
-
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

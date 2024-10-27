@@ -43,22 +43,21 @@ class RevisionPage(QWidget):
         back_flashcards_button = QPushButton("Back to Flashcards")
         back_flashcards_button.clicked.connect(switch_back_to_flashcards)
 
-        back_menu_button = QPushButton("Back to Menu")
-        back_menu_button.clicked.connect(switch_back_to_menu)
-
         # Add widgets to layout
         self.layout.addWidget(self.flashcard_label)
         self.layout.addWidget(self.flashcontent)
         self.layout.addWidget(self.show_answer_button)
         self.layout.addWidget(back_flashcards_button)
-        self.layout.addWidget(back_menu_button)
 
         self.setLayout(self.layout)
 
     
     def updatestats(self):
-        with open("./current/stats.txt","r",encoding="utf-8") as f:
-            self.stats = f.readlines()
+        try:
+            with open("./current/stats.txt","r",encoding="utf-8") as f:
+                self.stats = f.readlines()
+        except:
+            self.stats = []
 
     def update_content_shown(self,des_file,file_content,is_answer):
         with open(des_file,"r",encoding="utf-8") as f:
@@ -114,6 +113,7 @@ class RevisionPage(QWidget):
         self.next_question()
 
     def next_question(self):
+        self.updatestats()
         self.is_showing_answer = False
         self.question_id = self.decide_next_question(self.stats)
         """Placeholder for showing the next question."""
@@ -180,4 +180,4 @@ class RevisionPage(QWidget):
                 next_card_id = i + 1  # Flashcard ID starts from 1, so add 1
 
         return next_card_id
-        #return 2
+        #return 2 

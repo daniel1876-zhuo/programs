@@ -1,4 +1,4 @@
-import sys,os,shutil
+import sys,os,shutil,time
 from PySide6.QtWidgets import (
     QApplication, QMainWindow, QVBoxLayout, QWidget, QLineEdit, QTextEdit,
     QPushButton, QLabel, QStackedWidget, QFileDialog, QMessageBox, QListWidget,QHBoxLayout
@@ -51,18 +51,23 @@ class EditorPage(QWidget):
 
         self.upload_question_and_answer(refresh)
 
-        self.rem_button = QPushButton("Remove this flashcard (doesn't work yet)")
-        self.rem_button.clicked.connect(None)
+        self.rem_button = QPushButton("Remove this flashcard")
+        self.rem_button.clicked.connect(lambda:self.removeflash(refresh))
         self.Layout2.addWidget(self.rem_button)
 
-        self.title3 = QLabel("Rename this flashcard (doesn't work yet)")
+        self.title3 = QLabel("Rename this flashcard (press back to flashcards to save changes)")
         self.Layout2.addWidget(self.title3)
 
         self.renameinput = QTextEdit()
+        try:
+            with open("./current/metadata.txt") as f:
+                self.renameinput.setPlainText(f.readline()[0:-1])
+        except:
+            pass
         self.Layout2.addWidget(self.renameinput)
 
         self.back_button = QPushButton("Back to Flashcards")
-        self.back_button.clicked.connect(switch_back)
+        self.back_button.clicked.connect(lambda:self.savename(switch_back))
         self.Layout2.addWidget(self.back_button)
 
         self.realLayout.addLayout(self.Layout)
@@ -332,18 +337,23 @@ class EditorPage(QWidget):
         self.Layout2.addWidget(self.title2)
         self.upload_question_and_answer(refresh)
 
-        self.rem_button = QPushButton("Remove this flashcard (doesn't work yet)")
-        self.rem_button.clicked.connect(None)
+        self.rem_button = QPushButton("Remove this flashcard")
+        self.rem_button.clicked.connect(lambda:self.removeflash(refresh))
         self.Layout2.addWidget(self.rem_button)
 
-        self.title3 = QLabel("Rename this flashcard (doesn't work yet)")
+        self.title3 = QLabel("Rename this flashcard")
         self.Layout2.addWidget(self.title3)
 
         self.renameinput = QTextEdit()
+        try:
+            with open("./current/metadata.txt") as f:
+                self.renameinput.setPlainText(f.readline()[0:-1])
+        except:
+            pass
         self.Layout2.addWidget(self.renameinput)
 
         self.back_button = QPushButton("Back to Flashcards")
-        self.back_button.clicked.connect(switch_back)
+        self.back_button.clicked.connect(lambda:self.savename(switch_back))
         self.Layout2.addWidget(self.back_button)
 
         self.Layout.update()
@@ -421,4 +431,48 @@ class EditorPage(QWidget):
                 pass
             self.layout().update()
             
+    def removeflash(self,refresh):
+        f = open("./current/metadata.txt","r")
+        text = f.readlines()
+        if text[1] == "1\n":
+            f.close()
+            QMessageBox.information(self,"Cannot remove","Please add another flashcard before removing this one!")
+        else:
+            text[1] = str(int(text[1])-1)
+            text.pop(self.currentflash[0]+1)
+            print(self.currentflash[0]+1,int(text[1])+2)
+            for i in range(self.currentflash[0]+1,int(text[1])+2):
+                text[i] = text[i].replace(str(i),str(i-1))
+            f.close()
+            text[1] = text[1] + "\n"
+            with open("./current/metadata.txt","w") as f:
+                f.writelines(text)
+            with open("./current/stats.txt","r") as f:
+                text2 = f.readlines()
+                text2.pop(self.currentflash[0]-1)
+            with open("./current/stats.txt","w") as f:
+                f.writelines(text2)
             
+
+            for f in os.listdir("./current/flashcards"):
+                print(self.currentflash[0])
+                if f.startswith(str(self.currentflash[0])):
+                    print("remove",os.path.join("./current/flashcards",f))
+                    os.remove(os.path.join("./current/flashcards",f))
+            for f in os.listdir("./current/flashcards"):
+                flashnum = int(f[0])
+                if flashnum > self.currentflash[0]:
+                    print(f)
+                    print("renamed to",str(flashnum-1)+f[1:])
+                    os.rename(os.path.join("./current/flashcards",f),"./current/flashcards/"+str(flashnum-1)+f[1:])
+            print('refresh!')
+            self.currentflash = [1,False]
+            refresh()
+    
+    def savename(self,switch_back):
+        with open("./current/metadata.txt","r") as f:
+            text = f.readlines()
+            text[0] = self.renameinput.toPlainText()+"\n"
+        with open("./current/metadata.txt","w") as f:
+            f.writelines(text)
+        switch_back()
