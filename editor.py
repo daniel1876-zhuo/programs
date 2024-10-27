@@ -4,7 +4,7 @@ from PySide6.QtWidgets import (
     QPushButton, QLabel, QStackedWidget, QFileDialog, QMessageBox, QListWidget,QHBoxLayout
 )
 from PySide6.QtGui import(
-    QAction,
+    QAction,QTextDocument
 )
 from PySide6.QtCore import(
     Qt
@@ -15,17 +15,19 @@ class EditorPage(QWidget):
     """
     Page for editing flashcard set.
     """
-
     def __init__(self, switch_back,refresh):
         super().__init__()
         self.currentflash = [1,False]
+        self.ischanging = False
 
         self.Layout = QVBoxLayout()
+        self.Layout2 = QVBoxLayout()
+        self.realLayout = QHBoxLayout()
         self.toplabel = QLabel("Currently showing flashcard")
 
         self.minilayout = QHBoxLayout()
         self.prevbutton = QPushButton("Show Previous")
-        self.prevbutton.clicked.connect(lambda a : self.changeflash(self.currentflash[0]-1))
+        self.prevbutton.clicked.connect(lambda : self.changeflash(self.currentflash[0]-1))
         self.minilayout.addWidget(self.prevbutton)
         self.flashnum = QLabel(str(self.currentflash[0]))
         self.flashnum.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -33,7 +35,7 @@ class EditorPage(QWidget):
         self.change.clicked.connect(self.showans)
         self.minilayout.addWidget(self.change)
         self.nextbutton = QPushButton("Show Next")
-        self.nextbutton.clicked.connect(lambda a : self.changeflash(self.currentflash[0]+1))
+        self.nextbutton.clicked.connect(lambda : self.changeflash(self.currentflash[0]+1))
         self.minilayout.addWidget(self.nextbutton)
         self.Layout.addWidget(self.toplabel)
         self.Layout.addWidget(self.flashnum)
@@ -42,13 +44,30 @@ class EditorPage(QWidget):
         self.flashrender = MediaPlayer(self.currentflash[0],self.currentflash[1])
         self.Layout.addWidget(self.flashrender)
         self.title = QLabel("Replace this flashcard")
-        self.Layout.addWidget(self.title)
+        self.Layout2.addWidget(self.title)
         self.replace_question_and_answer(refresh)
         self.title2 = QLabel("Add new flashcard")
-        self.Layout.addWidget(self.title2)
+        self.Layout2.addWidget(self.title2)
 
-        self.upload_question_and_answer(switch_back,refresh)
-        self.setLayout(self.Layout)
+        self.upload_question_and_answer(refresh)
+
+        self.rem_button = QPushButton("Remove this flashcard (doesn't work yet)")
+        self.rem_button.clicked.connect(None)
+        self.Layout2.addWidget(self.rem_button)
+
+        self.title3 = QLabel("Rename this flashcard (doesn't work yet)")
+        self.Layout2.addWidget(self.title3)
+
+        self.renameinput = QTextEdit()
+        self.Layout2.addWidget(self.renameinput)
+
+        self.back_button = QPushButton("Back to Flashcards")
+        self.back_button.clicked.connect(switch_back)
+        self.Layout2.addWidget(self.back_button)
+
+        self.realLayout.addLayout(self.Layout)
+        self.realLayout.addLayout(self.Layout2)
+        self.setLayout(self.realLayout)
 
     def upload_file(self):
         file = QFileDialog.getOpenFileName(self, "Select Multimedia Files", "",
@@ -136,9 +155,14 @@ class EditorPage(QWidget):
             with open(f"{target_path}_des.txt","w",encoding="utf-8") as f:
                 f.write(self.question_input2.toPlainText())
 
+            self.ischanging = True
             self.is_question2 = False
             self.question_label2.setText("Replace your answer's descrption (If Any):")
-            self.question_input2.clear()
+            try:
+                with open("./current/flashcards/"+str(self.currentflash[0])+"_answer_des.txt","r") as f:
+                    self.question_input2.setPlainText("".join(f.readlines()))
+            except:
+                pass
         else:
             target_directory = "./current/flashcards"
             # create the description file
@@ -159,6 +183,7 @@ class EditorPage(QWidget):
                     filenames[1] = self.answer_file_path2.split('/')[-1]
                 self.metatext[1+self.currentflash[0]] = filenames[0]+':'+filenames[1]
                 f.writelines(self.metatext)
+            self.ischanging = False
             refresh()
 
 
@@ -166,8 +191,10 @@ class EditorPage(QWidget):
         self.is_question = False
         self.question_label.setText("Enter your answer's descrption (If Any):")
         self.question_input.clear()
+        # self.Layout2.update()
+        # self.layout().update()
 
-    def upload_question_and_answer(self,switch_back,refresh):
+    def upload_question_and_answer(self,refresh):
         try:
             with open("./current/metadata.txt", "r", encoding="utf-8") as f:
                 self.file_id = int(f.readlines()[1][0:-1])#the index of the latest file added
@@ -195,14 +222,11 @@ class EditorPage(QWidget):
         self.submit_button.clicked.connect(lambda:self.submit(refresh))
 
         # Button to go back to Flashcards page
-        self.back_button = QPushButton("Back to Flashcards")
-        self.back_button.clicked.connect(switch_back)
 
-        self.Layout.addWidget(self.question_label)
-        self.Layout.addWidget(self.question_input)
-        self.Layout.addWidget(self.upload_button)
-        self.Layout.addWidget(self.submit_button)
-        self.Layout.addWidget(self.back_button)
+        self.Layout2.addWidget(self.question_label)
+        self.Layout2.addWidget(self.question_input)
+        self.Layout2.addWidget(self.upload_button)
+        self.Layout2.addWidget(self.submit_button)
     
     def replace_question_and_answer(self,refresh):
         try:
@@ -213,6 +237,14 @@ class EditorPage(QWidget):
         # Input for question's description
         self.question_label2 = QLabel("Replace your question's description (If Any):")
         self.question_input2 = QTextEdit()
+        try:
+            with open("./current/flashcards/"+str(self.currentflash[0])+"_des.txt","r") as f:
+                self.question_input2.setPlainText("".join(f.readlines()))
+                # self.Layout2.update()
+                # self.layout().update()
+        except:
+            pass
+
 
         # Button to upload a file (for questions)
         self.is_uploaded = False
@@ -227,10 +259,10 @@ class EditorPage(QWidget):
         self.submit_button2 = QPushButton("Submit")
         self.submit_button2.clicked.connect(lambda:self.replacesubmit(refresh))
 
-        self.Layout.addWidget(self.question_label2)
-        self.Layout.addWidget(self.question_input2)
-        self.Layout.addWidget(self.upload_button2)
-        self.Layout.addWidget(self.submit_button2)
+        self.Layout2.addWidget(self.question_label2)
+        self.Layout2.addWidget(self.question_input2)
+        self.Layout2.addWidget(self.upload_button2)
+        self.Layout2.addWidget(self.submit_button2)
 
 
     def clearLayout(self, layout): ##code taken from https://stackoverflow.com/questions/9374063/remove-all-items-from-a-layout"
@@ -243,23 +275,26 @@ class EditorPage(QWidget):
                 else:
                     self.clearLayout(item.layout())
     
-    def updatepage(self, switch_back,refresh): # update file fetching when flashcards loaded
+    def updatepage(self,switch_back,refresh): # update file fetching when flashcards loaded
 
         ## implementation here is a bit awkward but it works for now
-        self.layout().removeWidget(self.flashrender)
-        self.layout().removeWidget(self.title)
-        self.Layout.removeWidget(self.question_label)
-        self.Layout.removeWidget(self.question_input)
-        self.Layout.removeWidget(self.upload_button)
-        self.Layout.removeWidget(self.submit_button)
-        self.Layout.removeWidget(self.back_button)
-        self.Layout.removeWidget(self.question_label2)
-        self.Layout.removeWidget(self.question_input2)
-        self.Layout.removeWidget(self.upload_button2)
-        self.Layout.removeWidget(self.submit_button2)
+        self.Layout.removeWidget(self.flashrender)
+        self.Layout2.removeWidget(self.title)
+        self.Layout2.removeWidget(self.question_label)
+        self.Layout2.removeWidget(self.question_input)
+        self.Layout2.removeWidget(self.upload_button)
+        self.Layout2.removeWidget(self.submit_button)
+        self.Layout2.removeWidget(self.back_button)
+        self.Layout2.removeWidget(self.question_label2)
+        self.Layout2.removeWidget(self.question_input2)
+        self.Layout2.removeWidget(self.upload_button2)
+        self.Layout2.removeWidget(self.submit_button2)
         self.Layout.removeWidget(self.toplabel)
         self.Layout.removeWidget(self.flashnum)
-        self.Layout.removeWidget(self.title2)
+        self.Layout2.removeWidget(self.title2)
+        self.Layout2.removeWidget(self.rem_button)
+        self.Layout2.removeWidget(self.title3)
+        self.Layout2.removeWidget(self.renameinput)
         self.question_label.deleteLater()
         self.question_input.deleteLater()
         self.upload_button.deleteLater()
@@ -278,8 +313,11 @@ class EditorPage(QWidget):
         self.flashrender.deleteLater()
         self.title.deleteLater()
         self.title2.deleteLater()
+        self.title3.deleteLater()
+        self.rem_button.deleteLater()
+        self.renameinput.deleteLater()
 
-
+        self.ischanging = False
         self.toplabel = QLabel("Currently showing flashcard")
         self.Layout.insertWidget(0,self.toplabel)
         self.flashnum = QLabel(str(self.currentflash[0]))
@@ -288,11 +326,28 @@ class EditorPage(QWidget):
         self.flashrender = MediaPlayer(self.currentflash[0],self.currentflash[1])
         self.Layout.addWidget(self.flashrender)
         self.title = QLabel("Replace this flashcard")
-        self.Layout.addWidget(self.title)
+        self.Layout2.addWidget(self.title)
         self.replace_question_and_answer(refresh)
         self.title2 = QLabel("Add new flashcard")
-        self.Layout.addWidget(self.title2)
-        self.upload_question_and_answer(switch_back,refresh)
+        self.Layout2.addWidget(self.title2)
+        self.upload_question_and_answer(refresh)
+
+        self.rem_button = QPushButton("Remove this flashcard (doesn't work yet)")
+        self.rem_button.clicked.connect(None)
+        self.Layout2.addWidget(self.rem_button)
+
+        self.title3 = QLabel("Rename this flashcard (doesn't work yet)")
+        self.Layout2.addWidget(self.title3)
+
+        self.renameinput = QTextEdit()
+        self.Layout2.addWidget(self.renameinput)
+
+        self.back_button = QPushButton("Back to Flashcards")
+        self.back_button.clicked.connect(switch_back)
+        self.Layout2.addWidget(self.back_button)
+
+        self.Layout.update()
+        self.Layout2.update()
         self.layout().update()
 
     def showans(self):
@@ -310,7 +365,7 @@ class EditorPage(QWidget):
                     child.widget().deleteLater()'''
             self.flashrender.deleteLater()
             self.flashrender = MediaPlayer(self.currentflash[0],self.currentflash[1])
-            self.layout().insertWidget(3,self.flashrender)
+            self.Layout.insertWidget(3,self.flashrender)
             self.layout().update()
         else:  ##currently question, need to show answer
             self.minilayout.removeWidget(self.change)
@@ -326,38 +381,44 @@ class EditorPage(QWidget):
                     child.widget().deleteLater()'''
             self.flashrender.deleteLater()
             self.flashrender = MediaPlayer(self.currentflash[0],self.currentflash[1])
-            self.layout().insertWidget(3,self.flashrender)
+            self.Layout.insertWidget(3,self.flashrender)
             self.layout().update()
 
     def changeflash(self,newflashnum):
-        with open("./current/metadata.txt", "r", encoding="utf-8") as f:
-            totalnum = int(f.readlines()[1][0:-1])
-        if newflashnum == 0:
-            newflashnum = totalnum
-        if newflashnum == totalnum+1:
-            newflashnum = 1
-        self.minilayout.removeWidget(self.change)
-        self.change.deleteLater()
-        self.currentflash[1] = False
-        self.currentflash[0] = newflashnum
-        self.change = QPushButton("Show Answer")
-        self.change.clicked.connect(self.showans)
-        self.minilayout.insertWidget(1,self.change)
+        if not self.ischanging:
+            with open("./current/metadata.txt", "r", encoding="utf-8") as f:
+                totalnum = int(f.readlines()[1][0:-1])
+            if newflashnum == 0:
+                newflashnum = totalnum
+            if newflashnum == totalnum+1:
+                newflashnum = 1
+            self.minilayout.removeWidget(self.change)
+            self.change.deleteLater()
+            self.currentflash[1] = False
+            self.currentflash[0] = newflashnum
+            self.change = QPushButton("Show Answer")
+            self.change.clicked.connect(self.showans)
+            self.minilayout.insertWidget(1,self.change)
 
-        self.layout().removeWidget(self.flashnum)
-        self.flashnum.deleteLater()
-        self.flashnum = QLabel(str(self.currentflash[0]))
-        self.flashnum.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.layout().insertWidget(1,self.flashnum)
+            self.Layout.removeWidget(self.flashnum)
+            self.flashnum.deleteLater()
+            self.flashnum = QLabel(str(self.currentflash[0]))
+            self.flashnum.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            self.Layout.insertWidget(1,self.flashnum)
 
-        '''while self.flashrender.count():
-                child = self.flashrender.takeAt(0)
-                if child.widget():
-                    child.widget().deleteLater()'''
-        self.flashrender.deleteLater()
-        self.flashrender = MediaPlayer(self.currentflash[0],self.currentflash[1])
-        self.layout().insertWidget(3,self.flashrender)
-        self.minilayout.update()
-        self.layout().update()
-        
-        
+            '''while self.flashrender.count():
+                    child = self.flashrender.takeAt(0)
+                    if child.widget():
+                        child.widget().deleteLater()'''
+            self.flashrender.deleteLater()
+            self.flashrender = MediaPlayer(self.currentflash[0],self.currentflash[1])
+            self.Layout.insertWidget(3,self.flashrender)
+            self.minilayout.update()
+            try:
+                with open("./current/flashcards/"+str(self.currentflash[0])+"_des.txt","r") as f:
+                    self.question_input2.setPlainText("".join(f.readlines()))
+            except:
+                pass
+            self.layout().update()
+            
+            

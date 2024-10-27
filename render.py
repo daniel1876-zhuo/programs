@@ -38,19 +38,20 @@ class MediaPlayer(QWidget):
             except:
                 self.label = QLabel(" ") ## doesn't exist?
                 self.scroll = QScrollArea()
-                #self.scroll.setFixedHeight(300)
+                self.scroll.setFixedHeight(300)
                 self.scroll.setWidget(self.label)
 
                 return self.scroll
         try:
             extension = self.fileloc[-4:].lower()
+            print("moved on",extension,self.fileloc)
             if extension == ".txt":
                 with open(self.fileloc,"r") as f:
                     text = "".join(f.readlines())
-                print("Rendering text!")
+                print("rendering text:", text)
                 self.label = QLabel(text)
                 self.scroll = QScrollArea()
-                #self.scroll.setFixedHeight(300)
+                self.scroll.setFixedHeight(300)
                 self.scroll.setWidget(self.label)
                 return self.scroll
             elif extension in (".gif,.jpg,.jpeg,.png"):
@@ -65,10 +66,12 @@ class MediaPlayer(QWidget):
                 return self.label
             elif extension in (".mp4,.avi,.mov"): ##video
                 self.playing = QPushButton("Play The Video")
+                self.playing.setMinimumHeight(300)
                 self.playing.clicked.connect(self.playvideo)
                 return self.playing
             elif extension in (".mp3, .wav"):
                 self.playing = QPushButton("Play The Audio")
+                self.playing.setMinimumHeight(270)
                 self.playing.clicked.connect(self.playaudio)
                 self.stop_playing = QPushButton("Stop Playing")
                 self.stop_playing.clicked.connect(self.stopplay)
@@ -76,14 +79,14 @@ class MediaPlayer(QWidget):
             else: ##unknown type
                 self.label = QLabel(" ")
                 self.scroll = QScrollArea()
-                #self.scroll.setFixedHeight(300)
+                self.scroll.setFixedHeight(300)
                 self.scroll.setWidget(self.label)
                 return self.scroll
         except Exception as e:
             print(e)
             self.label = QLabel(" ")
             self.scroll = QScrollArea()
-            #self.scroll.setFixedHeight(300)
+            self.scroll.setFixedHeight(300)
             self.scroll.setWidget(self.label)
             return self.scroll ## no file exists?
 
@@ -141,9 +144,10 @@ class MediaPlayer(QWidget):
         self.player.play()
 
     def stopplay(self):
-        self.player.stop()
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = MediaPlayer(2)
-    window.show()
-    sys.exit(app.exec())
+            self.player.stop()
+            if __name__ == "__main__":
+                app = QApplication(sys.argv)
+                window = MediaPlayer(2)
+                window.show()
+                sys.exit(app.exec())
+
