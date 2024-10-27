@@ -6,7 +6,7 @@ from PySide6.QtWidgets import (
 )
 from menu import *
 from flashcardmenu import *
-# from statistic import *
+from statistic import *
 from editor import *
 from test import *
 
@@ -24,8 +24,7 @@ class MainWindow(QMainWindow):
         self.menu_page = MenuPage(
             self.create_flashcards,
             self.import_flashcards,
-            None
-            # self.show_statistics_page
+            self.show_statistics_page
         )
         self.flashcards_page = FlashcardsPage(
             self.show_add_flashcard_page,
@@ -39,7 +38,7 @@ class MainWindow(QMainWindow):
             self.show_menu_page,
         )
 
-        # self.statistics_page = StatisticsPage(self.show_menu_page)
+        self.statistics_page = StatisticsPage(self.show_menu_page)
 
         # Add pages to the stacked widget
         self.stacked_widget.addWidget(self.menu_page)
@@ -112,9 +111,9 @@ class MainWindow(QMainWindow):
         self.stacked_widget.setCurrentWidget(self.revision_page)
 
 
-    # def show_statistics_page(self):
-    #     """Switch to the statistics page."""
-    #     self.stacked_widget.setCurrentWidget(self.statistics_page)
+    def show_statistics_page(self):
+        """Switch to the statistics page."""
+        self.stacked_widget.setCurrentWidget(self.statistics_page)
 
 
 if __name__ == "__main__":
