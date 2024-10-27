@@ -3,7 +3,7 @@
 Implement and integrate EditorPage:  (Daniel)I'm working on this one
 > Render flashcard
 > 
-> Upload edits to ./current/flashcards and ./current/metadata.txt
+> Upload edits to ./current/flashcards and ./current/metadata.txt (this one has been done)
 
 Implement and integrate RevisionPage:
 > Render flashcard
