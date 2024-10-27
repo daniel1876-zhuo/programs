@@ -1,17 +1,19 @@
 ## To do list
 
-Implement and integrate EditorPage: 
-> Render flashcard
-> 
-> Upload edits to ./current/flashcards and ./current/metadata.txt (this one has been done)
+Complete EditorPage:
+> Add ability to remove flashcard
+>
+> Initially include written description in replace description text box
+>
+> Bug fixing
 
 Implement and integrate RevisionPage:
-> Render flashcard
-> 
-> Edit ./current/stats.txt
-
-Integrate StatisticsPage and change architecture accordingly (done)
+> I don't know how much of this is done but we need to finish this
 
 Implement flashcard exporting/saving in switch_back_to_menu
 
 Implement Tutorial
+
+Bug fixing
+
+Tidy up code + comments
