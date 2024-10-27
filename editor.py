@@ -140,17 +140,6 @@ class EditorPage(QWidget):
         self.Layout.addWidget(self.upload_button)
         self.Layout.addWidget(self.submit_button)
         self.Layout.addWidget(self.back_button)
-
-
-    def clearLayout(self, layout): ##code taken from https://stackoverflow.com/questions/9374063/remove-all-items-from-a-layout"
-        if layout is not None:
-            while layout.count():
-                item = layout.takeAt(0)
-                widget = item.widget()
-                if widget is not None:
-                    widget.deleteLater()
-                else:
-                    self.clearLayout(item.layout())
     
     def updatepage(self, switch_back): # update file fetching when flashcards loaded
 
