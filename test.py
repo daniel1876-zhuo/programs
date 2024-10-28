@@ -142,6 +142,13 @@ class RevisionPage(QWidget):
         max_priority = float('-inf')
         next_card_id = -1
 
+        #validation check
+        for flashcard in stats:
+            line = flashcard[0:-1].split(' ')
+            print(line)
+            if int(line[0]) < 0 or int(line[1]) < 0:
+                assert False, "stats.txt is corrupted"
+
         #calculate priority score of flashcards
         for i in range(len(stats)):
             line = stats[i][0:-1].split(' ')
