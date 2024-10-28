@@ -314,7 +314,10 @@ class EditorPage(QWidget):
         self.submit_button2.deleteLater()
         self.toplabel.deleteLater()
         self.flashnum.deleteLater()
-        self.flashrender.deleteLater()
+        try:
+            self.flashrender.deleteLater()
+        except:
+            pass
         self.title.deleteLater()
         self.title2.deleteLater()
         self.title3.deleteLater()
@@ -374,7 +377,10 @@ class EditorPage(QWidget):
             self.minilayout.insertWidget(1,self.change) #replacing it with "show answer" button
             self.minilayout.update() #update flashcard changing layout to reflect changes
 
-            self.flashrender.deleteLater() #delete currently displayed flashcard
+            try:
+                self.flashrender.deleteLater() #delete currently displayed flashcard
+            except:
+                pass
             self.flashrender = MediaPlayer(self.currentflash[0],self.currentflash[1]) #render a new flashcard from render.py
             self.Layout.insertWidget(3,self.flashrender)
             self.layout().update() #update layout to show rendered flashcard
@@ -388,7 +394,10 @@ class EditorPage(QWidget):
             self.minilayout.insertWidget(1,self.change) #replacing it with "show question" button
             self.minilayout.update()
 
-            self.flashrender.deleteLater() #delete currently displayed flashcard
+            try:
+                self.flashrender.deleteLater() #delete currently displayed flashcard
+            except:
+                pass
             self.flashrender = MediaPlayer(self.currentflash[0],self.currentflash[1]) #render a new flashcard from render.py
             self.Layout.insertWidget(3,self.flashrender)
             self.layout().update() #update layout to show rendered flashcard
@@ -419,7 +428,10 @@ class EditorPage(QWidget):
             self.flashnum.setAlignment(Qt.AlignmentFlag.AlignCenter)
             self.Layout.insertWidget(1,self.flashnum)#insert changes into layout
 
-            self.flashrender.deleteLater() #delete currently showing flashcard
+            try:
+                self.flashrender.deleteLater() #delete currently showing flashcard
+            except:
+                pass
             self.flashrender = MediaPlayer(self.currentflash[0],self.currentflash[1]) #render new flashcard from render.py to show
             self.Layout.insertWidget(3,self.flashrender)
             self.minilayout.update() #update layouts to show changes
