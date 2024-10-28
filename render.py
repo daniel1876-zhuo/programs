@@ -87,7 +87,7 @@ class MediaPlayer(QWidget):
                 self.stop_playing.clicked.connect(self.stopplay)
                 return self.playing,self.stop_playing
             else: ##unknown type (some unknwon errors may occur, if this happen then set a spare content)
-                self.label = QLabel("The file is not found! You may accidently delete them!")
+                self.label = QLabel("")
                 self.scroll = QScrollArea()
                 self.scroll.setFixedHeight(300)
                 self.scroll.setWidget(self.label)
@@ -95,7 +95,7 @@ class MediaPlayer(QWidget):
         #no file exists or other unknown errors occur, set a spare content.
         except Exception as e:
             print(e)
-            self.label = QLabel("The file is not found! You may accidently delete them!")
+            self.label = QLabel("")
             self.scroll = QScrollArea()
             self.scroll.setFixedHeight(300)
             self.scroll.setWidget(self.label)
